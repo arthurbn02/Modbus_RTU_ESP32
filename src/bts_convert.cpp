@@ -98,7 +98,7 @@ uint32_t Convert_From_Bytes_To_Int(uint8_t data1, uint8_t data2, uint8_t data3, 
  * @param data The 16-bit unsigned integer to convert.
  * @return A pointer to an array of two 8-bit unsigned integers.
  */
-uint8_t *Convert_From_Uint16_To_Bytes(int data)
+uint8_t *Convert_From_Uint16_To_Bytes(uint16_t data)
 {
     static data_format_uint8_16_t input_convert;
     input_convert.data_uint16 = data;

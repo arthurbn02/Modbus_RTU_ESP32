@@ -56,7 +56,7 @@ uint8_t* Convert_From_Int_To_Bytes(int data);
 
 uint32_t Convert_From_Bytes_To_Int(uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
 
-uint8_t* Convert_From_Uint16_To_Bytes(int data);
+uint8_t* Convert_From_Uint16_To_Bytes(uint16_t data);
 
 uint16_t Convert_From_Bytes_To_Uint16(uint8_t data1, uint8_t data2);
 
