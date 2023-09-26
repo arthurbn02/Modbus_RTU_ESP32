@@ -201,8 +201,10 @@ void MB_Slave_Read_Update_Frequence(uint8_t *data)
 void MB_Slave_Read_Response_Status(uint8_t *data)
 {
   respone_status_message_e message_state;
-  uint16_t number_byte = data[DEFAULT_NUMBER_DATA], temp_position = 0;
-  uint8_t phone_number[10], mac_address[20], location[20], sensor[4], voltage_pin[4], signal_status[4], internet_status[4], mqtt_status[2], time_disconnect[4], mqtt_count[8];
+  uint16_t number_byte = data[DEFAULT_NUMBER_DATA], temp_position = 0, mqtt_disconnect_time;
+  uint8_t phone_number[10], mac_address[6], location[20], pin_rate, sim_rate, reset_time, mqtt_state;
+  float sensor_current;
+  uint32_t ping_time, number_mqtt_success, success_mqtt_time;
   message_state = RS_PHONE_NUMBER_STATE;
   for(uint16_t i = DEFAULT_DATA_START; i < DEFAULT_DATA_START + number_byte; i ++)
   {
@@ -218,7 +220,7 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
         break;
       case RS_MAC_ADDRESS_STATE:
         mac_address[temp_position++] = data[i];
-        if(temp_position == 20)
+        if(temp_position == 6)
         {
           temp_position = 0;
           message_state = RS_LOCATION_STATE;
@@ -233,57 +235,75 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
         }
         break;
       case RS_SENSOR_DATA_STATE:
-        sensor[temp_position++] = data[i];
+        uint8_t temp_data[4];
+        temp_data[temp_position++] = data[i];
         if(temp_position == 4)
         {
+          sensor_current = Convert_From_Bytes_To_Float(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
           temp_position = 0;
-          message_state = RS_PIN_VOLT_STATE;
+          message_state = RS_PIN_SIM_STATE;
         }
         break;
-      case RS_PIN_VOLT_STATE:
-        voltage_pin[temp_position++] = data[i];
-        if(temp_position == 4)
+      case RS_PIN_SIM_STATE:
+        if(temp_position++ == 0)
         {
-          temp_position = 0;
-          message_state = RS_SIGNAL_STATUS_STATE;
+          pin_rate = data[i];
         }
-        break;
-      case RS_SIGNAL_STATUS_STATE:
-        signal_status[temp_position++] = data[i];
-        if(temp_position == 4)
+        else if(temp_position == 1)
         {
+          sim_rate = data[i];
           temp_position = 0;
           message_state = RS_INTERNET_STATUS_STATE;
         }
         break;
       case RS_INTERNET_STATUS_STATE:
-        internet_status[temp_position++] = data[i];
+        uint8_t temp_data[4];
+        temp_data[temp_position++] = data[i];
         if(temp_position == 4)
         {
-          temp_position = 0;
-          message_state = RS_MQTT_STATUS_STATE;
-        }
-        break;
-      case RS_MQTT_STATUS_STATE:
-        mqtt_status[temp_position++] = data[i];
-        if(temp_position == 2)
-        {
+          ping_time = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
           temp_position = 0;
           message_state = RS_DISCONNECT_TIME_STATE;
         }
         break;
       case RS_DISCONNECT_TIME_STATE:
-        time_disconnect[temp_position++] = data[i];
-        if(temp_position == 4)
+        uint8_t temp_data[2];
+        temp_data[temp_position++] = data[i];
+        if(temp_position == 2)
         {
+          mqtt_disconnect_time = Convert_From_Bytes_To_Uint16(temp_data[0], temp_data[1]);
           temp_position = 0;
-          message_state = RS_NUMBER_MQTT_STATE;
+          message_state = RS_NUMBER_MQTT_SUCCESS_STATE;
         }
         break;
-      case RS_NUMBER_MQTT_STATE:
-        mqtt_count[temp_position++] = data[i];
-        if(temp_position == 8)
+      case RS_NUMBER_MQTT_SUCCESS_STATE:
+        uint8_t temp_data[4];
+        temp_data[temp_position++] = data[i];
+        if(temp_position == 4)
         {
+          number_mqtt_success = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          temp_position = 0;
+          message_state = RS_TIME_MQTT_STATE;
+        }
+        break;
+      case RS_TIME_MQTT_STATE:
+        uint8_t temp_data[4];
+        temp_data[temp_position++] = data[i];
+        if(temp_position == 4)
+        {
+          success_mqtt_time = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          temp_position = 0;
+          message_state = RS_MQTT_STATUS_STATE;
+        }
+        break;
+      case RS_MQTT_STATUS_STATE:
+        if(temp_position++ == 0)
+        {
+          reset_time = data[i];
+        }
+        else if(temp_position == 1)
+        {
+          mqtt_state = data[i];
           temp_position = 0;
           message_state = RS_PHONE_NUMBER_STATE;
         }
@@ -301,33 +321,22 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
   Serial.print("Resonse Status Location: ");
   MB_Slave_Debug_Data(location, 20);
   Serial.println();
-  Serial.println("Resonse Status Sensor Data: ");
-  MB_Slave_Debug_Data(sensor, 4);
-  Serial.println();
-  Serial.print("Resonse Status Pin Voltage: ");
-  MB_Slave_Debug_Data(voltage_pin, 4);
-  Serial.println();
+  Serial.println("Resonse Status Sensor Data: " + String(sensor_current));
+  Serial.println("Resonse Status Pin Rate: " + String(pin_rate));
+  Serial.println("Resonse Status Sim Rate: " + String(sim_rate));
+  Serial.println("Resonse Status Ping Time: " + String(ping_time));
+  Serial.println("Resonse Status MQTT Disconnect Time: " + String(mqtt_disconnect_time));
+  Serial.println("Resonse Status Number MQTT Success: " + String(number_mqtt_success));
+  Serial.println("Resonse Status Success MQTT Time: " + String(success_mqtt_time));
   Serial.println("Resonse Status Signal Status: ");
-  MB_Slave_Debug_Data(signal_status, 4);
-  Serial.println();
-  Serial.print("Resonse Status Internet Status: ");
-  MB_Slave_Debug_Data(internet_status, 4);
-  Serial.println();
-  Serial.println("Resonse Status MQTT Status: ");
-  MB_Slave_Debug_Data(mqtt_status, 2);
-  Serial.println();
-  Serial.print("Resonse Status Disconnect Count: ");
-  MB_Slave_Debug_Data(time_disconnect, 4);
-  Serial.println();
-  Serial.println("Resonse Status Success MQTT Count: ");
-  MB_Slave_Debug_Data(mqtt_count, 8);
-  Serial.println();
+  Serial.println("Resonse Status Reset Time: " + String(reset_time));
+  Serial.println("Resonse Status Mqtt State: " + String(mqtt_state));
 }
 void MB_Slave_Read_Config_Location(uint8_t *data)
 {
   config_location_message_e message_state;
   uint16_t number_byte = data[DEFAULT_NUMBER_DATA], temp_position = 0;
-  uint8_t longitude[20], latitude[20];
+  uint8_t longitude[4], latitude[4];
   message_state = CL_LONGITUDE_STATE;
   for(uint16_t i = DEFAULT_DATA_START; i < DEFAULT_DATA_START + number_byte; i ++)
   {
@@ -335,7 +344,7 @@ void MB_Slave_Read_Config_Location(uint8_t *data)
     {
       case CL_LONGITUDE_STATE:
         longitude[temp_position++] = data[i];
-        if(temp_position == 20)
+        if(temp_position == 4)
         {
           temp_position = 0;
           message_state = CL_LATITUDE_STATE;
@@ -343,7 +352,7 @@ void MB_Slave_Read_Config_Location(uint8_t *data)
         break;
       case CL_LATITUDE_STATE:
         latitude[temp_position++] = data[i];
-        if(temp_position == 20)
+        if(temp_position == 4)
         {
           temp_position = 0;
           message_state = CL_LONGITUDE_STATE;
@@ -354,10 +363,10 @@ void MB_Slave_Read_Config_Location(uint8_t *data)
     }
   }
   Serial.print("Config Location Longitude: ");
-  MB_Slave_Debug_Data(longitude, 20);
+  MB_Slave_Debug_Data(longitude, 4);
   Serial.println();
   Serial.println("Config Location Latitude: ");
-  MB_Slave_Debug_Data(latitude, 20);
+  MB_Slave_Debug_Data(latitude, 4);
   Serial.println();
 }
 

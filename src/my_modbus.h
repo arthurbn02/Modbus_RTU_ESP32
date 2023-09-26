@@ -20,7 +20,7 @@
 #define PING_RESPONSE_START_REGISTER 64
 #define CONFIG_FREQUENCE_START_REGISTER 99
 #define RESPONSE_STATUS_START_REGISTER 101
-#define CONFIG_LOCATION_START_REGISTER 156
+#define CONFIG_LOCATION_START_REGISTER 130
 #define CONFIG_MQTT_SEVER_START_REGISTER 176
 
 
@@ -31,41 +31,41 @@
 #define DEFAULT_DATA_START 6
 
 typedef enum{
-    LB_LED_NUMBER_STATE = 0,
-    LB_TIME_ON_STATE = 1,
-    LB_TIME_OFF_STATE = 2,
+    LB_LED_NUMBER_STATE     = 0,
+    LB_TIME_ON_STATE        = 1,
+    LB_TIME_OFF_STATE       = 2,
 }led_blink_message_e;
 
 typedef enum{
-    PR_PHONE_NUMBER_STATE = 0,
-    PR_DATA_STATE = 1,
+    PR_PHONE_NUMBER_STATE   = 0,
+    PR_DATA_STATE           = 1,
 }ping_respone_message_e;
 
 typedef enum{
-    RS_PHONE_NUMBER_STATE = 0,
-    RS_MAC_ADDRESS_STATE = 1,
-    RS_LOCATION_STATE = 2,
-    RS_SENSOR_DATA_STATE = 3,
-    RS_PIN_VOLT_STATE = 4,
-    RS_SIGNAL_STATUS_STATE = 5,
-    RS_INTERNET_STATUS_STATE = 6,
-    RS_MQTT_STATUS_STATE = 7,
-    RS_DISCONNECT_TIME_STATE = 8,
-    RS_NUMBER_MQTT_STATE = 9,
+    RS_PHONE_NUMBER_STATE           = 0,
+    RS_MAC_ADDRESS_STATE            = 1,
+    RS_LOCATION_STATE               = 2,
+    RS_SENSOR_DATA_STATE            = 3,
+    RS_PIN_SIM_STATE                = 4,
+    RS_INTERNET_STATUS_STATE        = 5,
+    RS_DISCONNECT_TIME_STATE        = 6,
+    RS_NUMBER_MQTT_SUCCESS_STATE    = 7,
+    RS_TIME_MQTT_STATE              = 8,
+    RS_MQTT_STATUS_STATE            = 9,
 }respone_status_message_e;
 
 typedef enum{
-    CL_LONGITUDE_STATE = 0,
-    CL_LATITUDE_STATE = 1,
+    CL_LONGITUDE_STATE  = 0,
+    CL_LATITUDE_STATE   = 1,
 }config_location_message_e;
 
 typedef enum{
-    CM_MQTT_ADDRESS_STATE = 0,
-    CM_MQTT_PORT_STATE = 1,
-    CM_USER_STATE = 2,
-    CM_PASSWORD_STATE = 3,
-    CM_DATA_RECEIVE_STATE = 4,
-    CM_DATA_SEND_STATE = 5,
+    CM_MQTT_ADDRESS_STATE   = 0,
+    CM_MQTT_PORT_STATE      = 1,
+    CM_USER_STATE           = 2,
+    CM_PASSWORD_STATE       = 3,
+    CM_DATA_RECEIVE_STATE   = 4,
+    CM_DATA_SEND_STATE      = 5,
 }config_mqtt_message_e;
 
 void MB_Slave_Run(void);
