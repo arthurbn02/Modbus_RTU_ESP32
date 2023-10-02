@@ -235,11 +235,11 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
         }
         break;
       case RS_SENSOR_DATA_STATE:
-        uint8_t temp_data[4];
-        temp_data[temp_position++] = data[i];
+        uint8_t temp_data1[4];
+        temp_data1[temp_position++] = data[i];
         if(temp_position == 4)
         {
-          sensor_current = Convert_From_Bytes_To_Float(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          sensor_current = Convert_From_Bytes_To_Float(temp_data1[0], temp_data1[1], temp_data1[2], temp_data1[3]);
           temp_position = 0;
           message_state = RS_PIN_SIM_STATE;
         }
@@ -247,51 +247,51 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
       case RS_PIN_SIM_STATE:
         if(temp_position++ == 0)
         {
-          pin_rate = data[i];
+          sim_rate = data[i];
         }
         else if(temp_position == 1)
         {
-          sim_rate = data[i];
+          pin_rate = data[i];
           temp_position = 0;
           message_state = RS_INTERNET_STATUS_STATE;
         }
         break;
       case RS_INTERNET_STATUS_STATE:
-        uint8_t temp_data[4];
-        temp_data[temp_position++] = data[i];
+        uint8_t temp_data2[4];
+        temp_data2[temp_position++] = data[i];
         if(temp_position == 4)
         {
-          ping_time = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          ping_time = Convert_From_Bytes_To_Int(temp_data2[0], temp_data2[1], temp_data2[2], temp_data2[3]);
           temp_position = 0;
           message_state = RS_DISCONNECT_TIME_STATE;
         }
         break;
       case RS_DISCONNECT_TIME_STATE:
-        uint8_t temp_data[2];
-        temp_data[temp_position++] = data[i];
+        uint8_t temp_data3[2];
+        temp_data3[temp_position++] = data[i];
         if(temp_position == 2)
         {
-          mqtt_disconnect_time = Convert_From_Bytes_To_Uint16(temp_data[0], temp_data[1]);
+          mqtt_disconnect_time = Convert_From_Bytes_To_Uint16(temp_data3[0], temp_data3[1]);
           temp_position = 0;
           message_state = RS_NUMBER_MQTT_SUCCESS_STATE;
         }
         break;
       case RS_NUMBER_MQTT_SUCCESS_STATE:
-        uint8_t temp_data[4];
-        temp_data[temp_position++] = data[i];
+        uint8_t temp_data4[4];
+        temp_data4[temp_position++] = data[i];
         if(temp_position == 4)
         {
-          number_mqtt_success = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          number_mqtt_success = Convert_From_Bytes_To_Int(temp_data4[0], temp_data4[1], temp_data4[2], temp_data4[3]);
           temp_position = 0;
           message_state = RS_TIME_MQTT_STATE;
         }
         break;
       case RS_TIME_MQTT_STATE:
-        uint8_t temp_data[4];
-        temp_data[temp_position++] = data[i];
+        uint8_t temp_data5[4];
+        temp_data5[temp_position++] = data[i];
         if(temp_position == 4)
         {
-          success_mqtt_time = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          success_mqtt_time = Convert_From_Bytes_To_Int(temp_data5[0], temp_data5[1], temp_data5[2], temp_data5[3]);
           temp_position = 0;
           message_state = RS_MQTT_STATUS_STATE;
         }
@@ -299,11 +299,11 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
       case RS_MQTT_STATUS_STATE:
         if(temp_position++ == 0)
         {
-          reset_time = data[i];
+          mqtt_state = data[i];
         }
         else if(temp_position == 1)
         {
-          mqtt_state = data[i];
+          reset_time = data[i];
           temp_position = 0;
           message_state = RS_PHONE_NUMBER_STATE;
         }
