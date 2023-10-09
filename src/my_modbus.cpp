@@ -120,11 +120,6 @@ void MB_Slave_Write_Get_Status(uint16_t data, String phone_number)
 void MB_Slave_Write_Request_Config(uint16_t data)
 {
   mb.Hreg(REQUEST_CONFIG_START_REGISTER, data);
-  for(int i = 0; i < 10; i += 2)
-  {
-    uint16_t temp_data = Convert_From_Bytes_To_Uint16(phone_number[i], phone_number[i + 1]);
-    mb.Hreg(REQUEST_CONFIG_START_REGISTER + i/2 + 1, temp_data);
-  }
 }
 
 void MB_Slave_Read_Led_Logic(uint8_t *data)
