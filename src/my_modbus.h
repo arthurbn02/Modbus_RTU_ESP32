@@ -15,6 +15,7 @@
 #define PING_STATUS_START_REGISTER 42
 #define CALIB_PARAMETERS_START_REGISTER 48
 #define GET_STATUS_START_REGISTER 54
+#define REQUEST_CONFIG_START_REGISTER 60
 
 #define LED_BLINK_START_REGISTER 61
 #define PING_RESPONSE_START_REGISTER 64
@@ -23,12 +24,14 @@
 #define CONFIG_LOCATION_START_REGISTER 130
 #define CONFIG_MQTT_SEVER_START_REGISTER 176
 
-
 #define SENSOR_NUMBER   16
 #define BUTTON_NUMBER   16
 
 #define DEFAULT_NUMBER_DATA 5
 #define DEFAULT_DATA_START 6
+
+#define RS485_TE 25
+#define RS485_RE 26 
 
 typedef enum{
     LB_LED_NUMBER_STATE     = 0,
@@ -81,6 +84,7 @@ void MB_Slave_Write_Status(uint16_t data);
 void MB_Slave_Write_Ping_Status(uint16_t data, String phone_number);
 void MB_Slave_Write_Calib_Parameters(float a, float b, float c);
 void MB_Slave_Write_Get_Status(uint16_t data, String phone_number);
+void MB_Slave_Write_Request_Config(uint16_t data);
 
 void MB_Slave_Read_Led_Logic(uint8_t *data);
 void MB_Slave_Read_Led_Blink(uint8_t *data);

@@ -282,6 +282,7 @@ void ModbusRTUTemplate::task() {
 -
 
 ----------------------------------------------------------*/
+
 	#if defined(MODBUSRTU_DEBUG)
 	Serial.println();
 	#endif
@@ -291,6 +292,7 @@ void ModbusRTUTemplate::task() {
     if (frameCrc != crc16(address, _frame, _len)) {  // CRC Check
 		goto cleanup;
     }
+	MB_Slave_RS485_Write();
 	_reply = EX_PASSTHROUGH;
 	if (_cbRaw) {
 		frame_arg_t header_data = { address, !isMaster };
@@ -323,8 +325,10 @@ void ModbusRTUTemplate::task() {
 				rawSend(address, _frame, _len);
 		}
     }
+
     // Cleanup
 cleanup:
+	MB_Slave_RS485_Read();
     free(_frame);
     _frame = nullptr;
     _len = 0;

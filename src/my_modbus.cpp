@@ -27,16 +27,22 @@ void MB_Slave_Run(void)
   MB_Slave_Write_Get_Status(1, phone);
   MB_Slave_Write_Ping_Status(1, phone);
   MB_Slave_Write_Status(1);
+  MB_Slave_Write_Request_Config(1);
   mb.task();
   yield();
 }
 
 void MB_Slave_Setup(void)
 {
-    Serial2.begin(9600);
-    mb.begin(&Serial2);
-    mb.slave(SLAVE_ID);
-    mb.addHreg(START_REGISTER_USED, 0, NUMBER_REGISTER_USED);
+  Serial2.begin(9600);
+  mb.begin(&Serial2);
+  mb.slave(SLAVE_ID);
+  mb.addHreg(START_REGISTER_USED, 0, NUMBER_REGISTER_USED);
+
+  //Config RS485 Control
+  pinMode(RS485_TE, OUTPUT);
+  pinMode(RS485_RE, OUTPUT);
+
 }
 
 uint16_t MB_Slave_Read_Register(uint16_t reg_address)
@@ -109,10 +115,15 @@ void MB_Slave_Write_Calib_Parameters(float a, float b, float c)
 void MB_Slave_Write_Get_Status(uint16_t data, String phone_number)
 {
   mb.Hreg(GET_STATUS_START_REGISTER, data);
+}
+
+void MB_Slave_Write_Request_Config(uint16_t data)
+{
+  mb.Hreg(REQUEST_CONFIG_START_REGISTER, data);
   for(int i = 0; i < 10; i += 2)
   {
     uint16_t temp_data = Convert_From_Bytes_To_Uint16(phone_number[i], phone_number[i + 1]);
-    mb.Hreg(GET_STATUS_START_REGISTER + i/2 + 1, temp_data);
+    mb.Hreg(REQUEST_CONFIG_START_REGISTER + i/2 + 1, temp_data);
   }
 }
 
