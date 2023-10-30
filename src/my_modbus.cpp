@@ -39,9 +39,9 @@ void MB_Slave_Setup(void)
   mb.slave(SLAVE_ID);
   mb.addHreg(START_REGISTER_USED, 0, NUMBER_REGISTER_USED);
 
-  //Config RS485 Control
-  pinMode(RS485_TE, OUTPUT);
-  pinMode(RS485_RE, OUTPUT);
+  // //Config RS485 Control
+  // pinMode(RS485_TE, OUTPUT);
+  // pinMode(RS485_RE, OUTPUT);
 
 }
 

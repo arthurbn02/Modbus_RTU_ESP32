@@ -1,7 +1,7 @@
 #ifndef _MYMODBUS_
 #define _MYMODBUS_
 
-#include "all_header.h"
+#include "Arduino.h"
 #include <modbus_rtu_library/ModbusRTU.h>
 
 #define SLAVE_ID 1
