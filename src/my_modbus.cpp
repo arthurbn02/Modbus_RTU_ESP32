@@ -126,11 +126,11 @@ void MB_Slave_Write_Calib_Parameters(float a, float b, float c, float d, float e
   mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 4, temp_data3[0]);
   mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 5, temp_data3[1]);
   uint16_t *temp_data4 = Convert_From_Float_To_Uint16(d);
-  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 4, temp_data4[0]);
-  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 5, temp_data4[1]);
+  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 6, temp_data4[0]);
+  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 7, temp_data4[1]);
   uint16_t *temp_data5 = Convert_From_Float_To_Uint16(e);
-  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 4, temp_data5[0]);
-  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 5, temp_data5[1]);
+  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 8, temp_data5[0]);
+  mb.Hreg(CALIB_PARAMETERS_START_REGISTER + 9, temp_data5[1]);
 }
 
 void MB_Slave_Write_Get_Status(uint16_t data, String phone_number)
