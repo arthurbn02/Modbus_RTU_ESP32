@@ -81,7 +81,7 @@ void MB_Slave_Write_RTC(uint8_t *data)
   for(int i = 0; i < 8; i += 2)
   {
     uint16_t temp_data = Convert_From_Bytes_To_Uint16(data[i], data[i + 1]);
-    mb.Hreg(BUTTON_DATA_START_REGISTER + i/2, temp_data);
+    mb.Hreg(RTC_DATA_START_REGISTER + i/2, temp_data);
   }  
 }
 

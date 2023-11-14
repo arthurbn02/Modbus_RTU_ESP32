@@ -59,7 +59,7 @@ void MB_Slave_Write_Status(uint16_t data);
 void MB_Slave_Write_Ping_Status(uint16_t data, String phone_number);
 void MB_Slave_Write_Calib_Parameters(float a, float b, float c, float d, float e);
 void MB_Slave_Write_Get_Status(uint16_t data, String phone_number);
-void MB_Slave_Write_Request_Config(uint16_t data);
+
 
 void MB_Slave_Read_Ping_Response(uint8_t *data);
 void MB_Slave_Read_Response_Status(uint8_t *data);
