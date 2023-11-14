@@ -188,9 +188,9 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
   respone_status_message_e message_state;
   uint16_t number_byte = data[DEFAULT_NUMBER_DATA], temp_position = 0, mqtt_disconnect_time;
   char location[20];
-  uint8_t phone_number[10], mac_address[6], pin_rate, sim_rate, reset_time, mqtt_state;
+  uint8_t phone_number[10], mac_address[6], pin_rate, sim_rate, reset_time;
   float sensor_current;
-  uint32_t ping_time, number_mqtt_success, success_mqtt_time;
+  uint32_t ping_time;
   message_state = RS_PHONE_NUMBER_STATE;
 
   uint8_t temp_data[4];
@@ -228,7 +228,7 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
         temp_data[temp_position++] = data[i];
         if(temp_position == 4)
         {
-          sensor_current = Convert_From_Bytes_To_Float(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          sensor_current = Convert_From_Bytes_To_Float(temp_data[2], temp_data[3], temp_data[0], temp_data[1]);
           temp_position = 0;
           message_state = RS_PIN_SIM_STATE;
         }
@@ -251,7 +251,7 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
         temp_data[temp_position++] = data[i];
         if(temp_position == 4)
         {
-          ping_time = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
+          ping_time = Convert_From_Bytes_To_Int(temp_data[2], temp_data[3], temp_data[1], temp_data[0]);
           temp_position = 0;
           message_state = RS_DISCONNECT_TIME_STATE;
         }
@@ -263,41 +263,12 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
         {
           mqtt_disconnect_time = Convert_From_Bytes_To_Uint16(temp_data[1], temp_data[0]);
           temp_position = 0;
-          message_state = RS_NUMBER_MQTT_SUCCESS_STATE;
+          message_state = RS_RESET_TIME_STATE;
         }
         break;
-      case RS_NUMBER_MQTT_SUCCESS_STATE:
-        // uint8_t temp_data[4];
-        temp_data[temp_position++] = data[i];
-        if(temp_position == 4)
-        {
-          number_mqtt_success = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
-          temp_position = 0;
-          message_state = RS_TIME_MQTT_STATE;
-        }
-        break;
-      case RS_TIME_MQTT_STATE:
-        // uint8_t temp_data[4];
-        temp_data[temp_position++] = data[i];
-        if(temp_position == 4)
-        {
-          success_mqtt_time = Convert_From_Bytes_To_Int(temp_data[0], temp_data[1], temp_data[2], temp_data[3]);
-          temp_position = 0;
-          message_state = RS_MQTT_STATUS_STATE;
-        }
-        break;
-      case RS_MQTT_STATUS_STATE:
-        if(temp_position == 0)
-        {
-          reset_time = data[i];
-          temp_position = 1;
-        }
-        else if(temp_position == 1)
-        {
-          mqtt_state = data[i];
-          temp_position = 0;
-          message_state = RS_PHONE_NUMBER_STATE;
-        }
+      case RS_RESET_TIME_STATE:
+        reset_time = data[i];
+        message_state = RS_PHONE_NUMBER_STATE;
         break;
       default:
         break;
@@ -317,10 +288,7 @@ void MB_Slave_Read_Response_Status(uint8_t *data)
   Serial.println("Resonse Status Sim Rate: " + String(sim_rate));
   Serial.println("Resonse Status Ping Time: " + String(ping_time));
   Serial.println("Resonse Status MQTT Disconnect Time: " + String(mqtt_disconnect_time));
-  Serial.println("Resonse Status Number MQTT Success: " + String(number_mqtt_success));
-  Serial.println("Resonse Status Success MQTT Time: " + String(success_mqtt_time));
   Serial.println("Resonse Status Reset Time: " + String(reset_time));
-  Serial.println("Resonse Status Mqtt State: " + String(mqtt_state));
 }
 
 //USED in ModbusRTU.cpp in modbus-esp8266 library

@@ -39,9 +39,7 @@ typedef enum{
     RS_PIN_SIM_STATE                = 4,
     RS_INTERNET_STATUS_STATE        = 5,
     RS_DISCONNECT_TIME_STATE        = 6,
-    RS_NUMBER_MQTT_SUCCESS_STATE    = 7,
-    RS_TIME_MQTT_STATE              = 8,
-    RS_MQTT_STATUS_STATE            = 9,
+    RS_RESET_TIME_STATE             = 7,
 }respone_status_message_e;
 
 
